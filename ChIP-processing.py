@@ -88,17 +88,17 @@ def genes_info_processing(input_file,ref,divide):
 			for i in fh:
 				if count == pair:
 					if di == int(divide):
-						out = os.popen("grep '" + i.split("\t| ")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
+						out = os.popen("grep '" + i.split("\t")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
 						f.write(out)
 					else:
-						out = os.popen("grep '" + i.split("\t| ")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
+						out = os.popen("grep '" + i.split("\t")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
 						f.write(out)
 						f.close()
 						count = 0
 						di += 1
 						f = open(wk_dir + "/gene-pair-" + str(di), 'a')
 				else:
-					out = os.popen("grep '" + i.split("\t| ")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
+					out = os.popen("grep '" + i.split("\t")[0] + "' " + wk_dir + "/gtf-sort.txt").read()
 					f.write(out)
 				count += 1
 		print ("divide genes list okay..")
