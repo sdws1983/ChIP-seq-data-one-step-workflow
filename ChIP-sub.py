@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 
 import sys, getopt
-import re
 import os
 import time
 
@@ -28,57 +27,180 @@ def get_option():
 
 	return input_file,output_file,ref,sam,divide
 
-def diff_list_map(i,divide,po_dir,read_dir,out_dir):
-	print ("mapping chr " + str(i) + " ...")
-	for n in range(int(divide)):
+def diff_list_map(i, divide, po_dir, read_dir, out_dir):
+		print("mapping chr " + str(i) + " ...")
+		for n in range(int(divide)):
 
-		print ("\tmapping to genes pair " + str(n + 1) + " ...")
-		positive = po_dir + "pair-" + str(n + 1) + ".+/"
-		negative = po_dir + "pair-" + str(n + 1) + ".-/"
-		if i in os.popen("ls " + positive).read()[:-1].split("\n"):
-			with open(read_dir + i) as f:
-				for each in f:
-					read_po = int(each[:-1])
-					with open(positive + i) as fh:
-						for t in fh:
-							t = t[:-1].split("\t")
-							calculate_bin_positive(read_po, int(t[0]), out_dir + "pair-" + str(n + 1) + "/TSS/" + i)# TSS position
-							calculate_bin_positive(read_po, int(t[1]), out_dir + "pair-" + str(n + 1) + "/TTS/" + i)# TTS position
-			print ("\t......positive is okay..")
-		if i in os.popen("ls " + negative).read()[:-1].split("\n"):
-			with open(read_dir + i) as f:
-				for each in f:
-					read_po = int(each[:-1])
-					with open(negative + i) as fh:
-						for t in fh:
-							t = t[:-1].split("\t")
-							calculate_bin_negative(read_po, int(t[1]), out_dir + "pair-" + str(n + 1) + "/TSS/" + i)# TSS position
-							calculate_bin_negative(read_po, int(t[0]), out_dir + "pair-" + str(n + 1) + "/TTS/" + i)# TTS position
-			print ("\t......negative is okay..")
+			print("\tmapping to genes pair " + str(n + 1) + " ...")
+			positive = po_dir + "pair-" + str(n + 1) + ".+/"
+			negative = po_dir + "pair-" + str(n + 1) + ".-/"
+			if i in os.popen("ls " + positive).read()[:-1].split("\n"):
 
-def calculate_bin_positive(a, b, c):
+				# TSS
 
+				with open(read_dir + i) as f:
+					gi_list = open(positive + i, 'r').read()[:-1].split('\n')
+					#					print (gi_list[:50])
+					for each in f:
+						read_po = int(each[:-1])
+						if read_po < (int(gi_list[0].split('\t')[0]) - 2000):
+							continue
+						elif read_po < (int(gi_list[0].split('\t')[0]) + 2000):
+							calculate_bin_positive(read_po, int(gi_list[0].split('\t')[0]), "/TSS/",
+							                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+							for u in gi_list[1:]:
+								if read_po < (int(u.split('\t')[0]) - 2000):
+									break
+								elif read_po < (int(u.split('\t')[0]) + 2000):
+									calculate_bin_positive(read_po, int(u.split('\t')[0]), "/TSS/",
+									                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+
+						else:
+							try:
+								while read_po >= (int(gi_list[0].split('\t')[0]) + 2000):
+									gi_list.pop(0)
+							except:
+								break
+
+							for u in gi_list:
+								if read_po < (int(u.split('\t')[0]) - 2000):
+									break
+								elif read_po < (int(u.split('\t')[0]) + 2000):
+									calculate_bin_positive(read_po, int(u.split('\t')[0]), "/TSS/",
+									                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+
+				# TTS
+
+				with open(read_dir + i) as f:
+					gi_list = open(positive + i, 'r').read()[:-1].split('\n')
+					# print (gi_list[:50])
+					for each in f:
+						read_po = int(each[:-1])
+						if read_po < (int(gi_list[0].split('\t')[1]) - 2000):
+							continue
+						elif read_po < (int(gi_list[0].split('\t')[1]) + 2000):
+							calculate_bin_positive(read_po, int(gi_list[0].split('\t')[1]), "/TTS/",
+							                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+							for u in gi_list[1:]:
+								if read_po < (int(u.split('\t')[1]) - 2000):
+									break
+								elif read_po < (int(u.split('\t')[1]) + 2000):
+									calculate_bin_positive(read_po, int(u.split('\t')[1]), "/TTS/",
+									                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+
+						else:
+							try:
+								while read_po >= (int(gi_list[0].split('\t')[1]) + 2000):
+									gi_list.pop(0)
+							except:
+								break
+
+							for u in gi_list:
+								if read_po < (int(u.split('\t')[1]) - 2000):
+									break
+								elif read_po < (int(u.split('\t')[1]) + 2000):
+									calculate_bin_positive(read_po, int(u.split('\t')[1]), "/TTS/",
+									                       out_dir + "pair-" + str(n + 1), i)  # !!!!
+
+				print("\t......positive is okay..")
+
+			# ------------------------------------------------------------------------------------------------------------------------------------------ #
+			# ------------------------------------------------------------------------------------------------------------------------------------------ #
+
+			if i in os.popen("ls " + negative).read()[:-1].split("\n"):
+
+				# TTS
+
+				with open(read_dir + i) as f:  # open reads file
+					gi_list = open(negative + i, 'r').read()[:-1].split('\n')
+					#	print (gi_list[:50])
+					for each in f:
+						read_po = int(each[:-1])
+						if read_po <= (int(gi_list[0].split('\t')[0]) - 2000):
+							continue
+						elif read_po <= (int(gi_list[0].split('\t')[0]) + 2000):
+							calculate_bin_negative(read_po, int(gi_list[0].split('\t')[0]), "/TTS/",
+							                       out_dir + "pair-" + str(n + 1), i)
+							for u in gi_list[1:]:
+								if read_po <= (int(u.split('\t')[0]) - 2000):
+									break
+								elif read_po <= (int(u.split('\t')[0]) + 2000):
+									calculate_bin_negative(read_po, int(u.split('\t')[0]), "/TTS/",
+									                       out_dir + "pair-" + str(n + 1), i)
+
+						else:
+							try:
+								while read_po > (int(gi_list[0].split('\t')[0]) + 2000):
+									gi_list.pop(0)
+							except:
+								break
+
+							for u in gi_list:
+								if read_po <= (int(u.split('\t')[0]) - 2000):
+									break
+								elif read_po <= (int(u.split('\t')[0]) + 2000):
+									calculate_bin_negative(read_po, int(u.split('\t')[0]), "/TTS/",
+									                       out_dir + "pair-" + str(n + 1), i)
+
+				# TSS
+
+				with open(read_dir + i) as f:  # open reads file
+					gi_list = open(negative + i, 'r').read()[:-1].split('\n')
+					#   print (gi_list[:50])
+					for each in f:
+						read_po = int(each[:-1])
+						if read_po <= (int(gi_list[0].split('\t')[1]) - 2000):
+							continue
+						elif read_po <= (int(gi_list[0].split('\t')[1]) + 2000):
+							calculate_bin_negative(read_po, int(gi_list[0].split('\t')[1]), "/TSS/",
+							                       out_dir + "pair-" + str(n + 1), i)
+							for u in gi_list[1:]:
+								if read_po <= (int(u.split('\t')[1]) - 2000):
+									break
+								elif read_po <= (int(u.split('\t')[1]) + 2000):
+									calculate_bin_negative(read_po, int(u.split('\t')[1]), "/TSS/",
+									                       out_dir + "pair-" + str(n + 1), i)
+
+						else:
+							try:
+								while read_po > (int(gi_list[0].split('\t')[1]) + 2000):
+									gi_list.pop(0)
+							except:
+								break
+
+							for u in gi_list:
+								if read_po <= (int(u.split('\t')[1]) - 2000):
+									break
+								elif read_po <= (int(u.split('\t')[1]) + 2000):
+									calculate_bin_negative(read_po, int(u.split('\t')[1]), "/TSS/",
+									                       out_dir + "pair-" + str(n + 1), i)
+
+				print("\t......negative is okay..")
+
+
+def calculate_bin_positive(a, b, c, d, e):
 	#   calculate reads in which bin (positive)  #
-	#   a : reads position		       #
-	#   b : TSS/TTS position		     #
-	#   c : output dir			   #
-	
-	if a < b + 2000 and a >= b - 2000:
-		f = open(c, 'a')
-		i = str((a - b) // 20)
-		f.write(i + "\n")
+	#   a : reads position                       #
+	#   b : TSS/TTS position                     #
+	#   c : TSS/TTS status                       #
+	#   d : output dir                           #
+	#   e : chr number                           #
 
-def calculate_bin_negative(a, b, c):
+	f = open(d + c + str(e), 'a')
+	f.write(str((a - b) // 20) + "\n")
 
+
+def calculate_bin_negative(a, b, c, d, e):
 	#   calculate reads in which bin (negative)  #
-	#   a : reads position		       #
-	#   b : TSS/TTS position		     #
-	#   c : output dir			   #
+	#   a : reads position                       #
+	#   b : TSS/TTS position                     #
+	#   c : TSS/TTS status                       #
+	#   d : output dir                           #
+	#   e : chr number                           #
 
-	if b < a + 2000 and b >= a - 2000:
-		f = open(c, 'a')
-		i = str((b - a) // 20)
-		f.write(i + "\n")
+	f = open(d + c + str(e), 'a')
+	f.write(str((b - a) // 20) + "\n")
+
 
 if __name__ == "__main__":
 
