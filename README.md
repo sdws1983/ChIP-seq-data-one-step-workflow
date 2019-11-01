@@ -7,7 +7,7 @@
 Linux, Python 3+, pandas, numpy
 
 #### Useages :
-
+```
 usage: Reads_distribution_calculation.py [-h] [-i INPUT] [-f GTF] [-b BAM]
                                          [-d DIVIDE] [-o OUTPUT]
 
@@ -21,5 +21,6 @@ optional arguments:
                         divide genes into
   -o OUTPUT, --output OUTPUT
                         output name
+```
 
   
