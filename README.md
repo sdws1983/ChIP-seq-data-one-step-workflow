@@ -2,29 +2,24 @@
 
 ### A self-built workflow for processing ChIP-seq data.
 
-#### Contain :
-
-main script : ChIP-processing.py
-
-sub scripts : ChIP-sub.py, new.sh
-
 #### Environment : 
 
 Linux, Python 3+, pandas, numpy
 
 #### Useages :
 
-ChIP-seq data processing workflow.
+usage: Reads_distribution_calculation.py [-h] [-i INPUT] [-f GTF] [-b BAM]
+                                         [-d DIVIDE] [-o OUTPUT]
 
-  -i : genes info
-  
-  -o : output name
-  
-  -f : gene annotation file (eg : gtf)
-  
-  -s : sam file
-  
-  -d : divide genes into <int> (default : 1)
-  
-  -l : reads length (default : 35)
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        gene info
+  -f GTF, --gtf GTF     gene annotation file (gtf)
+  -b BAM, --bam BAM     bam file
+  -d DIVIDE, --divide DIVIDE
+                        divide genes into
+  -o OUTPUT, --output OUTPUT
+                        output name
+
   
