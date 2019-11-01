@@ -1,13 +1,12 @@
 # ChIP-seq-data-one-step-workflow
 
 ### A self-built workflow for processing ChIP-seq data.
-
-#### Environment : 
-
-Linux, Python 3+, pandas, numpy
-
-#### Useages :
 ```
+Environment : 
+
+Python 3+, pandas, numpy, pysam
+Bedtools, Samtools
+
 usage: Reads_distribution_calculation.py [-h] [-i INPUT] [-f GTF] [-b BAM]
                                          [-d DIVIDE] [-o OUTPUT]
 
